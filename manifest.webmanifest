@@ -1,0 +1,17 @@
+{
+  "name": "Carnet Reflux",
+  "short_name": "Reflux",
+  "description": "Carnet quotidien des repas et des symptômes de reflux, avec analyse des corrélations.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EEF2EC",
+  "theme_color": "#2F6F5E",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"}
+  ]
+}
