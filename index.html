@@ -27,7 +27,7 @@ img{max-width:100%}
   --ground:#EEF2EC; --surface:#FFFFFF; --surface-2:#E3EAE3; --ink:#1D2926; --ink-2:#56655F; --line:#D3DDD5;
   --accent:#2F6F5E; --accent-ink:#FFFFFF; --accent-soft:#D5E8DF;
   --f0:#DCE4DD; --f1:#F5D76E; --f2:#F2B35B; --f3:#EC8A4C; --f4:#D9583B; --f5:#A92E2E;
-  --good:#2F6F5E; --warn:#C8612F; --alert:#A92E2E; --shadow:0 10px 30px -12px rgba(29,41,38,.25);
+  --bar:#D9583B; --good:#2F6F5E; --warn:#C8612F; --alert:#A92E2E; --shadow:0 10px 30px -12px rgba(29,41,38,.25);
   --display:"Bricolage Grotesque",ui-rounded,"Segoe UI",system-ui,sans-serif;
   --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
@@ -35,13 +35,13 @@ img{max-width:100%}
   :root:not([data-theme="light"]){
     --ground:#101714; --surface:#19221F; --surface-2:#223029; --ink:#E4EEE9; --ink-2:#98AAA2; --line:#2C3A34;
     --accent:#6CC2A8; --accent-ink:#0E1A16; --accent-soft:#1F3A31; --f0:#26332E;
-    --good:#6CC2A8; --warn:#F0935E; --alert:#F07070; --shadow:0 10px 30px -12px rgba(0,0,0,.7);
+    --bar:#EC8A4C; --good:#6CC2A8; --warn:#F0935E; --alert:#F07070; --shadow:0 10px 30px -12px rgba(0,0,0,.7);
   }
 }
 :root[data-theme="dark"]{
   --ground:#101714; --surface:#19221F; --surface-2:#223029; --ink:#E4EEE9; --ink-2:#98AAA2; --line:#2C3A34;
   --accent:#6CC2A8; --accent-ink:#0E1A16; --accent-soft:#1F3A31; --f0:#26332E;
-  --good:#6CC2A8; --warn:#F0935E; --alert:#F07070; --shadow:0 10px 30px -12px rgba(0,0,0,.7);
+  --bar:#EC8A4C; --good:#6CC2A8; --warn:#F0935E; --alert:#F07070; --shadow:0 10px 30px -12px rgba(0,0,0,.7);
 }
 *{box-sizing:border-box}
 html,body{background:var(--ground);color:var(--ink)}
@@ -194,6 +194,19 @@ textarea{min-height:60px;resize:vertical}
 .badge.on{background:var(--accent-soft);color:var(--ink)}
 .badge.on i{background:var(--accent);color:var(--accent-ink)}
 .chart svg{width:100%;height:auto;display:block}
+.trend{position:relative;min-height:190px}
+.trend svg{display:block;width:100%;height:auto;touch-action:pan-y;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--ground);font-size:.78rem;padding:7px 10px;border-radius:10px;width:max-content;max-width:210px;line-height:1.35;transform:translate(-50%,calc(-100% - 10px));z-index:3}
+.tip b{font-weight:700}
+.lg{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:.74rem;color:var(--ink-2);align-items:center}
+.lg span{display:inline-flex;align-items:center;gap:6px}
+.headline{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap}
+.headline b{font-family:var(--display);font-size:1.75rem;font-weight:800;line-height:1}
+.data-wrap{overflow-x:auto;max-height:260px;overflow-y:auto}
+table.data{width:100%;border-collapse:collapse;font-size:.8rem;font-variant-numeric:tabular-nums}
+table.data th,table.data td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
+table.data th{color:var(--ink-2);font-weight:600;position:sticky;top:0;background:var(--surface)}
+details > summary{cursor:pointer;font-size:.82rem;color:var(--ink-2);font-weight:600}
 .xp{background:linear-gradient(160deg,var(--accent-soft),var(--surface));border:1.5px solid var(--accent);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .xp-phase{display:flex;gap:6px}
 .xp-phase div{flex:1;text-align:center;font-size:.72rem;font-weight:700;padding:6px 2px;border-radius:9px;background:var(--surface-2);color:var(--ink-2)}
@@ -318,6 +331,7 @@ const ICON = {
   today: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/><circle cx="12" cy="15" r="1.6" fill="currentColor"/></svg>`,
   cal: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>`,
   chart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>`,
+  trend: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-6 4 3 5-7 4 4"/><path d="M3 21h18"/></svg>`,
   left: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>`,
   right: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>`,
   play: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4V8Z" fill="currentColor"/></svg>`,
@@ -328,7 +342,7 @@ const ICON = {
    3. État et stockage
    ========================================================= */
 const S = {days:{}, real:null, meta:{}, demo:false, cur:today(), tab:"today", db:null, q:{},
-           calMonth:null, horizon:"court", fam:"all"};
+           calMonth:null, horizon:"court", fam:"all", trendRange:30, trendFam:"all"};
 
 function migrate(d){
   d.meals = (d.meals||[]).map(m => ({size:1, ...m, foods:(m.foods||[]).map(f => ({qty:1, ...f}))}));
@@ -696,9 +710,26 @@ function foodFreq(){
   Object.values(S.days).forEach(d => (d.meals||[]).forEach(m => (m.foods||[]).forEach(x => f[x.name] = (f[x.name]||0)+1)));
   return f;
 }
+/* L'app installée (icône) et le navigateur ont chacun leur mémoire : ce qui est
+   noté dans l'un n'apparaît pas dans l'autre. Tant que le carnet tourne dans un
+   navigateur, on le dit et on explique comment déménager les données. */
+const installed = () => (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+function installNote(){
+  if (S.demo || installed()) return "";
+  const ua = navigator.userAgent;
+  const ios = /iPad|iPhone|iPod/.test(ua);
+  const nav = /CriOS|Chrome/.test(ua) ? "Chrome" : /FxiOS|Firefox/.test(ua) ? "Firefox" : ios ? "Safari" : "votre navigateur";
+  const how = `${nav} → bouton Partager → « Sur l'écran d'accueil »`;
+  const n = loggedCount();
+  if (!n) return `<div class="note"><b>À faire en premier : installer le carnet.</b> ${how}. Ouvrez-le ensuite par son icône et notez uniquement là : l'icône a sa propre mémoire, séparée du navigateur, et c'est elle qui garde vos données dans la durée.
+    <br><button class="btn sm ghost" data-act="demo" style="margin-top:8px">Voir l'analyse avec des données d'exemple</button></div>`;
+  return `<div class="note"><b>Le carnet n'est pas encore installé.</b> Vos ${n} journée${n>1?"s sont enregistrées":" est enregistrée"} dans ${nav}, où elles peuvent disparaître si le navigateur est nettoyé ou laissé de côté une semaine.
+    <br>Pour les mettre à l'abri, dans l'ordre : <b>1.</b> Sauvegarder ci-dessous. <b>2.</b> ${how}. <b>3.</b> Ouvrir le carnet par l'icône. <b>4.</b> Calendrier → Mes données → Restaurer, et choisir la sauvegarde.
+    <br><button class="btn sm" data-act="backup" style="margin-top:8px">Sauvegarder maintenant</button></div>`;
+}
 /* rappel de sauvegarde : au bout de 7 jours notés, puis toutes les 2 semaines */
 function backupDue(){
-  if (S.demo) return false;
+  if (S.demo || !installed()) return false;
   const n = loggedCount();
   if (n < 7) return false;
   return !S.meta.lastBackup || diffDays(today(), S.meta.lastBackup) >= 14;
@@ -709,7 +740,7 @@ function recentAlarms(){
   return [...out];
 }
 function render(){
-  const tabs = [["today","Aujourd'hui",ICON.today],["history","Calendrier",ICON.cal],["analysis","Analyse",ICON.chart]];
+  const tabs = [["today","Aujourd'hui",ICON.today],["history","Suivi",ICON.trend],["analysis","Analyse",ICON.chart]];
   $("#tabs").innerHTML = tabs.map(([k,l,i]) => `<button class="tab ${S.tab===k?"on":""}" data-tab="${k}" aria-current="${S.tab===k}">${i}${l}</button>`).join("");
   const st = streak(), al = recentAlarms();
   const head = `
@@ -721,6 +752,7 @@ function render(){
     ${backupDue() ? `<div class="note" style="margin-bottom:12px"><b>Pensez à sauvegarder</b> — ${loggedCount()} jours notés ${S.meta.lastBackup?"depuis la dernière sauvegarde":"et aucune sauvegarde"}. <button class="btn sm ghost" data-act="backup" style="margin-top:8px">Sauvegarder maintenant</button></div>` : ""}
     ${al.length ? `<div class="alert"><b>À signaler au médecin</b> — vous avez coché ces 3 dernières semaines : ${esc(al.join(", ").toLowerCase())}. Ces signes méritent un avis médical rapide, sans attendre l'analyse.</div>` : ""}`;
   $("#app").innerHTML = head + (S.tab === "today" ? viewToday() : S.tab === "history" ? viewHistory() : viewAnalysis());
+  if (S.tab === "history") drawTrend();
 }
 
 /* =========================================================
@@ -799,7 +831,7 @@ function viewToday(){
       ${ctx ? `<div class="note">${esc(ctx)}</div>` : ""}
     </div>
 
-    ${loggedCount()===0 && !S.demo ? `<div class="note"><b>À faire en premier : installer le carnet.</b> Sur iPhone, dans Safari, touchez le bouton Partager puis « Sur l'écran d'accueil ». Commencez à noter seulement après : l'icône a sa propre mémoire, séparée de Safari, et c'est elle qui conserve vos données dans la durée.<br><button class="btn sm ghost" data-act="demo" style="margin-top:8px">Voir l'analyse avec des données d'exemple</button></div>` : ""}
+    ${installNote()}
   </div>`;
 }
 
@@ -808,6 +840,33 @@ function viewToday(){
    ========================================================= */
 const W = {day:null, step:0, slot:null, q:"", epi:null, alarmOpen:false};
 
+/* Sur iPhone, la roue de sélection d'heure valide par « change », pas toujours par
+   « input » : on écoute les deux. Chaque fiche relit aussi ses champs avant de se
+   redessiner, pour qu'une valeur choisie ne soit jamais écrasée par l'ancienne. */
+function onField(root, fn){ root.addEventListener("input", fn); root.addEventListener("change", fn); }
+function fieldValue(root, sel){ const el = root.querySelector(sel); return el ? el.value : null; }
+/* choix du jour dans les fiches : aujourd'hui, hier, avant-hier (+ le jour affiché s'il est plus ancien) */
+function dayPicker(date){
+  const opts = [[addDays(today(),-2),"Avant-hier"],[addDays(today(),-1),"Hier"],[today(),"Aujourd'hui"]];
+  if (!opts.some(o => o[0] === S.cur)) opts.unshift([S.cur, parse(S.cur).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})]);
+  return `<div class="field"><label>Jour</label>
+    <div class="seg tiny" role="group" aria-label="Jour">${opts.map(([d,l]) => `<button class="${date===d?"on":""}" data-a="day" data-v="${d}">${l}</button>`).join("")}</div></div>`;
+}
+/* place une entrée (repas ou symptôme) dans le bon jour, en la retirant de l'ancien si besoin */
+function placeEntry(kind, entry, fromDate, toDate){
+  if (fromDate && fromDate !== toDate) {
+    const old = getDay(fromDate);
+    old[kind] = old[kind].filter(x => x.id !== entry.id);
+    commit(old);
+  }
+  const day = getDay(toDate), before = completion(day).filter(Boolean).length;
+  const i = day[kind].findIndex(x => x.id === entry.id);
+  i >= 0 ? day[kind][i] = entry : day[kind].push(entry);
+  if (kind === "symptoms") day.noSymptoms = false;
+  S.cur = toDate;
+  commit(day);
+  return {day, before};
+}
 function closeSheet(){ $("#sheet-root").innerHTML = ""; document.body.style.overflow = ""; }
 function openSheet(bind){
   $("#sheet-root").innerHTML = `<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"></div></div>`;
@@ -931,7 +990,8 @@ function wizard(){
     const body = W.step === 0 ? drawMeals() : W.step === 1 ? drawSymptoms() : drawContext();
     root.innerHTML = `<div class="grab"></div>
       <div class="row between">
-        <div class="steps-dots">${[0,1,2].map(i=>`<i class="${i<=W.step?"on":""}"></i>`).join("")}</div>
+        <div class="row" style="gap:10px"><div class="steps-dots">${[0,1,2].map(i=>`<i class="${i<=W.step?"on":""}"></i>`).join("")}</div>
+          <span class="muted small">Bilan · <b>${esc(fmtDay(S.cur))}</b></span></div>
         <button class="x" data-a="close" aria-label="Fermer" style="all:unset;cursor:pointer;padding:4px 8px;font-size:1.1rem">✕</button>
       </div>
       ${body}
@@ -952,16 +1012,25 @@ function wizard(){
 
   openSheet(root => {
     draw(root);
-    root.addEventListener("input", e => {
-      const a = e.target.dataset.a;
-      if (e.target.id === "q") { W.q = e.target.value; const s = root.scrollTop; draw(root); root.scrollTop = s; return; }
-      if (a === "time") { ensureMeal(e.target.dataset.k).time = e.target.value; }
-      if (a === "bed") W.day.bedtime = e.target.value;
-      if (a === "etime") W.epi.time = e.target.value;
-      if (a === "enote") W.epi.note = e.target.value;
+    /* relit les champs affichés : appelé à chaque saisie ET avant chaque redessin */
+    const readFields = () => {
+      root.querySelectorAll('input[type=time][data-a="time"]').forEach(el => { if (el.value) ensureMeal(el.dataset.k).time = el.value; });
+      const bed = root.querySelector("#bed"); if (bed) W.day.bedtime = bed.value;
+      if (W.epi) {
+        const t = fieldValue(root,"#etime"); if (t) W.epi.time = t;
+        const n = fieldValue(root,"#enote"); if (n !== null) W.epi.note = n;
+      }
+    };
+    onField(root, e => {
+      if (e.target.id === "q") {
+        if (e.type === "input") { W.q = e.target.value; const s = root.scrollTop; draw(root); root.scrollTop = s; }
+        return;
+      }
+      readFields();
     });
     root.addEventListener("click", ev => {
       const b = ev.target.closest("[data-a]"); if (!b) return;
+      readFields();
       const a = b.dataset.a, k = b.dataset.k, v = b.dataset.v, s = root.scrollTop;
       if (a === "close") return closeSheet();
       if (a === "open") { ensureMeal(k); W.slot = k; W.q = ""; }
@@ -1033,11 +1102,13 @@ function mealSheet(existing){
   const guess = h < 11 ? "petitdej" : h < 15 ? "dejeuner" : h < 18 ? "collation" : "diner";
   const m = existing ? JSON.parse(JSON.stringify(existing))
     : {id:uid(), type:guess, time: S.cur===today()?nowHM():MEALS.find(x=>x.k===guess).t, size:1, foods:[]};
-  let q = "", del = false;
+  let q = "", del = false, date = S.cur;
+  const from = existing ? S.cur : null;
   const draw = root => {
     const res = searchFoods(q);
     root.innerHTML = `<div class="grab"></div>
       <div class="row between"><h2>${existing?"Modifier le repas":"Nouveau repas"}</h2><button data-a="close" aria-label="Fermer" style="all:unset;cursor:pointer;padding:4px 8px">✕</button></div>
+      ${dayPicker(date)}
       <div class="seg" role="group">${MEALS.map(x=>`<button class="${m.type===x.k?"on":""}" data-a="type" data-v="${x.k}">${x.short}</button>`).join("")}</div>
       <div class="row"><div class="field" style="flex:1"><label for="mt">Heure</label><input id="mt" type="time" value="${m.time}" data-a="time"></div>
       <div class="field" style="flex:1.4"><label>Taille</label><div class="seg tiny">${SIZES.map((s,i)=>`<button class="${(m.size??1)===i?"on":""}" data-a="size" data-v="${i}">${s}</button>`).join("")}</div></div></div>
@@ -1054,14 +1125,20 @@ function mealSheet(existing){
   };
   openSheet(root => {
     draw(root);
-    root.addEventListener("input", e => {
-      if (e.target.id === "q") { q = e.target.value; const s = root.scrollTop; draw(root); root.scrollTop = s; }
-      if (e.target.dataset.a === "time") m.time = e.target.value;
+    const readFields = () => { const t = fieldValue(root,"#mt"); if (t) m.time = t; };
+    onField(root, e => {
+      if (e.target.id === "q") {
+        if (e.type === "input") { q = e.target.value; const s = root.scrollTop; draw(root); root.scrollTop = s; }
+        return;
+      }
+      readFields();
     });
     root.addEventListener("click", e => {
       const b = e.target.closest("[data-a]"); if (!b) return;
+      readFields();
       const a = b.dataset.a, s = root.scrollTop;
       if (a === "close") return closeSheet();
+      if (a === "day") date = b.dataset.v;
       if (a === "type") m.type = b.dataset.v;
       if (a === "size") m.size = +b.dataset.v;
       if (a === "pick") { const name = lookup(b.dataset.v).name; const i = m.foods.findIndex(f=>deburr(f.name)===deburr(name)); i>=0?m.foods.splice(i,1):m.foods.push({name,qty:1}); q = ""; }
@@ -1070,10 +1147,10 @@ function mealSheet(existing){
       if (a === "del") { if (!del) del = true; else { const day = getDay(S.cur); day.meals = day.meals.filter(x=>x.id!==m.id); closeSheet(); commit(day); toast("Repas supprimé"); return; } }
       if (a === "save") {
         if (!m.foods.length) { toast("Ajoutez au moins un aliment"); return; }
-        const day = getDay(S.cur), before = completion(day).filter(Boolean).length;
-        const i = day.meals.findIndex(x=>x.id===m.id);
-        i>=0 ? day.meals[i] = m : day.meals.push(m);
-        closeSheet(); commit(day); celebrate(before, completion(day).filter(Boolean).length, "Repas noté"); return;
+        closeSheet();
+        const {day, before} = placeEntry("meals", m, from, date);
+        celebrate(before, completion(day).filter(Boolean).length, date === today() ? "Repas noté" : `Repas noté pour ${fmtDay(date).toLowerCase()}`);
+        return;
       }
       draw(root); root.scrollTop = s;
     });
@@ -1083,10 +1160,12 @@ function mealSheet(existing){
 function symSheet(existing){
   const s = existing ? JSON.parse(JSON.stringify(existing))
     : {id:uid(), time: S.cur===today()?nowHM():"20:00", kinds:[], intensity:3, duration:1, note:""};
-  let del = false;
+  let del = false, date = S.cur;
+  const from = existing ? S.cur : null;
   const draw = root => {
     root.innerHTML = `<div class="grab"></div>
       <div class="row between"><h2>${existing?"Modifier le symptôme":"Nouveau symptôme"}</h2><button data-a="close" aria-label="Fermer" style="all:unset;cursor:pointer;padding:4px 8px">✕</button></div>
+      ${dayPicker(date)}
       <div class="field"><label>Quoi ?</label><div class="chips">${SYMPTOMS.map(k=>`<button class="chip ${s.kinds.includes(k)?"on":""}" data-a="kind" data-v="${esc(k)}">${esc(k)}</button>`).join("")}</div></div>
       <div class="field"><label>Intensité</label><div class="flames" role="radiogroup">${[1,2,3,4,5].map(i=>`<button class="flame ${s.intensity===i?"on":""}" role="radio" aria-checked="${s.intensity===i}" data-a="int" data-v="${i}">${ICON.flame(i<=s.intensity?flameColor(i):"var(--line)")}<span class="num">${i}</span>${INT_LABELS[i-1]}</button>`).join("")}</div></div>
       <div class="field"><label>Combien de temps ?</label><div class="seg tiny">${DUR_SHORT.map((l,i)=>`<button class="${s.duration===i?"on":""}" data-a="dur" data-v="${i}">${l}</button>`).join("")}</div></div>
@@ -1098,22 +1177,27 @@ function symSheet(existing){
   };
   openSheet(root => {
     draw(root);
-    root.addEventListener("input", e => { const a = e.target.dataset.a; if (a==="time") s.time = e.target.value; if (a==="note") s.note = e.target.value; });
+    const readFields = () => {
+      const t = fieldValue(root,"#st"); if (t) s.time = t;
+      const n = fieldValue(root,"#sn"); if (n !== null) s.note = n;
+    };
+    onField(root, readFields);
     root.addEventListener("click", e => {
       const b = e.target.closest("[data-a]"); if (!b) return;
+      readFields();
       const a = b.dataset.a, sc = root.scrollTop;
       if (a === "close") return closeSheet();
+      if (a === "day") date = b.dataset.v;
       if (a === "kind") { const i = s.kinds.indexOf(b.dataset.v); i>=0?s.kinds.splice(i,1):s.kinds.push(b.dataset.v); }
       if (a === "int") s.intensity = +b.dataset.v;
       if (a === "dur") s.duration = +b.dataset.v;
       if (a === "del") { if (!del) del = true; else { const day = getDay(S.cur); day.symptoms = day.symptoms.filter(x=>x.id!==s.id); closeSheet(); commit(day); toast("Symptôme supprimé"); return; } }
       if (a === "save") {
         if (!s.kinds.length) { toast("Choisissez au moins un symptôme"); return; }
-        const day = getDay(S.cur), before = completion(day).filter(Boolean).length;
-        const i = day.symptoms.findIndex(x=>x.id===s.id);
-        i>=0 ? day.symptoms[i] = s : day.symptoms.push(s);
-        day.noSymptoms = false;
-        closeSheet(); commit(day); celebrate(before, completion(day).filter(Boolean).length, "Symptôme noté"); return;
+        closeSheet();
+        const {day, before} = placeEntry("symptoms", s, from, date);
+        celebrate(before, completion(day).filter(Boolean).length, date === today() ? "Symptôme noté" : `Symptôme noté pour ${fmtDay(date).toLowerCase()}`);
+        return;
       }
       draw(root); root.scrollTop = sc;
     });
@@ -1123,6 +1207,155 @@ function symSheet(existing){
 /* =========================================================
    10. Vue : calendrier
    ========================================================= */
+/* ---------- graphique de suivi ---------- */
+const famMatch = (s, fam) => fam === "all" || s.kinds.some(k => famOf(k) === fam);
+/* une valeur par jour : intensité max (0 = journée sans symptôme), null = jour non rempli */
+function dayPoint(date, fam){
+  const d = S.days[date];
+  if (!isLogged(d)) return {date, filled:false};
+  const sy = d.symptoms.filter(s => famMatch(s, fam));
+  return {date, filled:true, max: sy.length ? Math.max(...sy.map(s => s.intensity)) : 0, n: sy.length,
+    kinds: [...new Set(sy.flatMap(s => s.kinds))], meds: (d.meds||[]).length > 0};
+}
+function trendSeries(){
+  const t = today(), fam = S.trendFam;
+  const logged = Object.keys(S.days).filter(k => isLogged(S.days[k])).sort();
+  if (!logged.length) return [];
+  let start = S.trendRange === "all" ? logged[0] : addDays(t, -(S.trendRange - 1));
+  if (start < logged[0]) start = logged[0];
+  const n = diffDays(t, start) + 1, pts = [];
+  for (let i = 0; i < n; i++) pts.push(dayPoint(addDays(start, i), fam));
+  /* moyenne glissante sur 7 jours calendaires, calculée sur les jours remplis (au moins 3) */
+  pts.forEach((p, i) => {
+    const w = [];
+    for (let k = 0; k < 7; k++) { const q = dayPoint(addDays(p.date, -k), fam); if (q.filled) w.push(q.max); }
+    p.avg = w.length >= 3 ? mean(w) : null;
+  });
+  return pts;
+}
+/* moyenne de l'intensité max sur une fenêtre de jours, jours remplis seulement */
+function windowAvg(endDate, days, fam){
+  const v = [];
+  for (let k = 0; k < days; k++) { const q = dayPoint(addDays(endDate, -k), fam); if (q.filled) v.push(q.max); }
+  return v.length >= 3 ? {v: mean(v), n: v.length} : null;
+}
+const fr1 = v => v.toFixed(1).replace(".", ",");
+
+function trendCard(){
+  const pts = trendSeries(), filled = pts.filter(p => p.filled);
+  const fam = S.trendFam;
+  const ranges = [[30,"30 j"],[90,"90 j"],["all","Tout"]];
+  const fams = [["all","Tous"],["typique","Reflux"],["orl","Gorge"],["digestif","Digestif"]];
+  const controls = `<div class="row wrap" style="gap:8px">
+      <div class="seg tiny" style="flex:1 1 150px" role="group" aria-label="Période">${ranges.map(([k,l]) => `<button class="${String(S.trendRange)===String(k)?"on":""}" data-act="trange" data-v="${k}">${l}</button>`).join("")}</div>
+      <div class="seg tiny" style="flex:2 1 220px" role="group" aria-label="Symptômes">${fams.map(([k,l]) => `<button class="${fam===k?"on":""}" data-act="tfam" data-v="${k}">${l}</button>`).join("")}</div>
+    </div>`;
+  if (filled.length < 2) return `<div class="card stack" style="gap:10px">${controls}
+    <div class="empty">Le graphique apparaîtra dès 2 journées remplies.</div></div>`;
+
+  const now = windowAvg(today(), 7, fam), prev = windowAvg(addDays(today(), -7), 7, fam);
+  let head = `<span class="muted small">Pas encore assez de jours cette semaine pour une moyenne.</span>`;
+  if (now) {
+    let delta = "";
+    if (prev) {
+      const d = now.v - prev.v;
+      delta = Math.abs(d) < 0.3 ? `<span class="muted small">stable par rapport aux 7 jours précédents (${fr1(prev.v)})</span>`
+        : d < 0 ? `<span class="small" style="color:var(--good);font-weight:700">↓ en baisse</span><span class="muted small">contre ${fr1(prev.v)} les 7 jours précédents</span>`
+        : `<span class="small" style="color:var(--warn);font-weight:700">↑ en hausse</span><span class="muted small">contre ${fr1(prev.v)} les 7 jours précédents</span>`;
+    }
+    head = `<span class="muted small" style="flex-basis:100%">Intensité moyenne, 7 derniers jours</span><b class="num">${fr1(now.v)}<span class="muted" style="font-size:.9rem;font-weight:600">/5</span></b>${delta}`;
+  }
+  const rows = pts.slice().reverse().map(p => `<tr><td>${parse(p.date).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</td>
+    <td>${p.filled ? (p.max ? p.max + "/5" : "aucun") : "—"}</td><td>${p.filled ? p.n : "—"}</td><td>${p.avg !== null && p.avg !== undefined ? fr1(p.avg) : "—"}</td></tr>`).join("");
+  return `<div class="card stack" style="gap:12px">
+    ${controls}
+    <div class="headline">${head}</div>
+    <div class="trend" id="trend" role="img" aria-label="Intensité maximale des symptômes par jour et moyenne sur 7 jours"></div>
+    <div class="lg">
+      <span><i style="width:10px;height:12px;border-radius:3px 3px 0 0;background:var(--bar)"></i>Intensité max du jour</span>
+      <span><i style="width:16px;height:2px;border-radius:2px;background:var(--ink)"></i>Moyenne sur 7 jours</span>
+      <span><i style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></i>Aucun symptôme</span>
+      <span><i style="width:6px;height:6px;border-radius:1px;background:var(--ink-2)"></i>Traitement pris</span>
+      <span>Rien : jour non rempli</span>
+    </div>
+    <details><summary>Voir les données</summary>
+      <div class="data-wrap"><table class="data"><thead><tr><th>Jour</th><th>Intensité max</th><th>Épisodes</th><th>Moy. 7 j</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </details>
+  </div>`;
+}
+
+function drawTrend(){
+  const host = document.getElementById("trend");
+  if (!host) return;
+  const pts = trendSeries();
+  const W = Math.max(260, Math.round(host.clientWidth)), H = 200;
+  const m = {l:24, r:46, t:14, b:40};
+  const pw = W - m.l - m.r, ph = H - m.t - m.b, n = pts.length;
+  const step = pw / n, bw = Math.max(1.5, Math.min(16, step - 2));
+  const x = i => m.l + step*i + step/2;
+  const y = v => m.t + ph - v/5*ph;
+  const base = y(0);
+  const svg = [];
+  /* grille et axe vertical (échelle fixe 0–5) */
+  for (let v = 0; v <= 5; v++) {
+    svg.push(`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="${v?1:1.5}" ${v?'stroke-dasharray="2 4"':""}/>`);
+    svg.push(`<text x="${m.l-8}" y="${y(v)+3.5}" font-size="10" text-anchor="end" fill="var(--ink-2)">${v}</text>`);
+  }
+  /* barres : intensité max, bout arrondi en haut */
+  pts.forEach((p, i) => {
+    if (!p.filled) return;
+    if (p.max === 0) { svg.push(`<circle cx="${x(i)}" cy="${base-4}" r="${Math.min(3.5, Math.max(2, bw/2))}" fill="var(--accent)"/>`); return; }
+    const top = y(p.max), h = base - top, x0 = x(i) - bw/2, r = bw >= 6 ? 3 : 0;
+    svg.push(r ? `<path d="M${x0},${base} V${top+r} Q${x0},${top} ${x0+r},${top} H${x0+bw-r} Q${x0+bw},${top} ${x0+bw},${top+r} V${base} Z" fill="var(--bar)"/>`
+               : `<rect x="${x0}" y="${top}" width="${bw}" height="${h}" fill="var(--bar)"/>`);
+  });
+  /* repères de traitement sous l'axe */
+  pts.forEach((p, i) => { if (p.filled && p.meds) svg.push(`<rect x="${x(i)-3}" y="${base+6}" width="6" height="6" rx="1" fill="var(--ink-2)"/>`); });
+  /* moyenne glissante : ligne interrompue là où il manque des données */
+  let d = "", pen = false, last = null;
+  pts.forEach((p, i) => {
+    if (p.avg === null || p.avg === undefined) { pen = false; return; }
+    d += `${pen ? "L" : "M"}${x(i).toFixed(1)},${y(p.avg).toFixed(1)} `; pen = true; last = {i, v:p.avg};
+  });
+  if (d) svg.push(`<path d="${d}" fill="none" stroke="var(--surface)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${d}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`);
+  if (last) svg.push(`<circle cx="${x(last.i)}" cy="${y(last.v)}" r="4" fill="var(--ink)" stroke="var(--surface)" stroke-width="2"/>
+    <text x="${x(last.i)+8}" y="${y(last.v)+4}" font-size="11" font-weight="700" fill="var(--ink)">${fr1(last.v)}</text>`);
+  /* dates : environ 5 repères */
+  const every = Math.max(1, Math.ceil(n / 5));
+  for (let i = n - 1; i >= 0; i -= every) {
+    const dt = parse(pts[i].date);
+    svg.push(`<text x="${x(i)}" y="${H-6}" font-size="10" text-anchor="middle" fill="var(--ink-2)">${dt.getDate()}/${dt.getMonth()+1}</text>`);
+  }
+  /* survol / toucher */
+  svg.push(`<line id="tr-x" x1="0" x2="0" y1="${m.t}" y2="${base}" stroke="var(--ink-2)" stroke-width="1" opacity="0"/>`);
+  svg.push(`<rect id="tr-hit" x="${m.l}" y="0" width="${pw}" height="${H}" fill="transparent"/>`);
+  host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${svg.join("")}</svg><div class="tip" hidden></div>`;
+
+  const tip = host.querySelector(".tip"), cross = host.querySelector("#tr-x"), hit = host.querySelector("#tr-hit");
+  const show = e => {
+    const r = host.getBoundingClientRect();
+    const i = clamp(Math.floor((e.clientX - r.left - m.l) / step), 0, n - 1), p = pts[i];
+    const day = parse(p.date).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+    const body = !p.filled ? "Jour non rempli"
+      : p.max === 0 ? "Aucun symptôme"
+      : `Intensité max <b>${p.max}/5</b> · ${p.n} épisode${p.n>1?"s":""}<br>${esc(p.kinds.join(", "))}`;
+    tip.innerHTML = `<b>${day}</b><br>${body}${p.filled && p.meds ? "<br>Traitement pris" : ""}${p.avg!=null ? `<br><span style="opacity:.75">Moyenne 7 j : ${fr1(p.avg)}</span>` : ""}`;
+    const topY = p.filled && p.max ? y(p.max) : p.avg != null ? y(p.avg) : base;
+    tip.style.left = clamp(x(i), 90, W - 90) + "px";
+    tip.style.top = topY + "px";
+    tip.hidden = false;
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("opacity", ".5");
+  };
+  const hide = () => { tip.hidden = true; cross.setAttribute("opacity", "0"); };
+  hit.addEventListener("pointermove", show);
+  hit.addEventListener("pointerdown", show);
+  hit.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hide(); });
+  host.addEventListener("focusout", hide);
+}
+let trendResize;
+addEventListener("resize", () => { clearTimeout(trendResize); trendResize = setTimeout(() => { if (S.tab === "history") drawTrend(); }, 120); });
+
 function viewHistory(){
   const t = today(), m = S.calMonth || t.slice(0,7);
   const [y, mo] = m.split("-").map(Number);
@@ -1145,6 +1378,8 @@ function viewHistory(){
   const badges = [[3,"3 jours"],[7,"1 semaine"],[14,"2 semaines"],[30,"1 mois"],[60,"2 mois"]];
 
   return `<div class="stack">
+    <div><div class="eyebrow">Évolution des symptômes</div><h1 style="font-size:1.7rem">Suivi</h1></div>
+    ${trendCard()}
     <div class="datenav">
       <button class="iconbtn" data-act="month" data-v="${prevM}" aria-label="Mois précédent">${ICON.left}</button>
       <h1 style="font-size:1.45rem">${monthLabel}</h1>
@@ -1539,6 +1774,8 @@ document.addEventListener("click", e => {
   if (a === "goto") { S.cur = b.dataset.v; S.tab = "today"; render(); window.scrollTo(0,0); }
   if (a === "month") { S.calMonth = b.dataset.v; render(); }
   if (a === "horizon") { S.horizon = b.dataset.v; render(); }
+  if (a === "trange") { S.trendRange = b.dataset.v === "all" ? "all" : Number(b.dataset.v); render(); }
+  if (a === "tfam") { S.trendFam = b.dataset.v; render(); }
   if (a === "fam") { S.fam = b.dataset.v; render(); }
   if (a === "export") exportSummary();
   if (a === "backup") backupSheet();
@@ -1549,6 +1786,28 @@ document.addEventListener("click", e => {
   if (a === "exit-demo") { S.days = S.real; S.real = null; S.demo = false; S.cur = today(); S.tab = "today"; render(); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#sheet-root").innerHTML) closeSheet(); });
+/* au doigt, la bulle du graphique se ferme en touchant ailleurs */
+document.addEventListener("pointerdown", e => {
+  if (e.target.closest && e.target.closest("#trend")) return;
+  const tip = document.querySelector("#trend .tip"), cross = document.querySelector("#tr-x");
+  if (tip) tip.hidden = true;
+  if (cross) cross.setAttribute("opacity", "0");
+});
+
+/* L'app installée reste en mémoire d'un jour à l'autre : au retour après minuit,
+   on passe sur la nouvelle journée (sauf si elle consultait volontairement un autre jour). */
+let lastToday = today();
+function refreshDay(){
+  const t = today();
+  if (t === lastToday) return;
+  if (S.cur === lastToday) S.cur = t;
+  lastToday = t;
+  if (!$("#sheet-root").innerHTML) render();
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshDay(); });
+addEventListener("focus", refreshDay);
+addEventListener("pageshow", refreshDay);
+setInterval(refreshDay, 60000);
 
 render();
 })();
