@@ -64,6 +64,7 @@ h3{font-size:1rem;font-weight:700}
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
 .brand{font-family:var(--display);font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:8px}
 .brand svg{width:22px;height:22px}
+.ver{font-family:var(--body);font-size:.68rem;font-weight:700;color:var(--ink-2);background:var(--surface-2);border-radius:999px;padding:2px 7px;letter-spacing:.02em}
 .streak{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;font-weight:700}
 .streak svg{width:18px;height:18px}
 .datenav{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -297,6 +298,8 @@ const FACTORS = ["Stress","Mauvaise nuit","Allongée après manger","Mangé vite
 const MEDS = ["IPP (oméprazole…)","Gaviscon / antiacide","Autre traitement"];
 const ALARMS = ["Difficulté à avaler","Vomissements répétés","Sang (vomi ou selles)","Perte de poids inexpliquée","Douleur thoracique intense"];
 const WINDOW_H = 4;
+/* numéro affiché à côté du nom ; à augmenter à chaque mise en ligne, avec CACHE dans sw.js */
+const APP_VERSION = "1.2";
 const LS = "carnet-reflux.days.v1";
 const LS_META = "carnet-reflux.meta.v1";
 
@@ -746,7 +749,7 @@ function render(){
   const head = `
     ${S.demo ? `<div class="demo-banner"><span><b>Données d'exemple.</b> Rien n'est enregistré.</span><button data-act="exit-demo">Mon carnet</button></div>` : ""}
     <div class="top">
-      <div class="brand">${ICON.flame("var(--f3)")} Carnet Reflux</div>
+      <div class="brand">${ICON.flame("var(--f3)")} Carnet Reflux <span class="ver num" title="Version de l'application">v${APP_VERSION}</span></div>
       <div class="streak num" title="Jours consécutifs remplis">${ICON.flame(st?"var(--f3)":"var(--line)")} ${st} j</div>
     </div>
     ${backupDue() ? `<div class="note" style="margin-bottom:12px"><b>Pensez à sauvegarder</b> — ${loggedCount()} jours notés ${S.meta.lastBackup?"depuis la dernière sauvegarde":"et aucune sauvegarde"}. <button class="btn sm ghost" data-act="backup" style="margin-top:8px">Sauvegarder maintenant</button></div>` : ""}
@@ -844,6 +847,9 @@ const W = {day:null, step:0, slot:null, q:"", epi:null, alarmOpen:false};
    « input » : on écoute les deux. Chaque fiche relit aussi ses champs avant de se
    redessiner, pour qu'une valeur choisie ne soit jamais écrasée par l'ancienne. */
 function onField(root, fn){ root.addEventListener("input", fn); root.addEventListener("change", fn); }
+/* Un toucher sur un champ de saisie n'est jamais une action : sans ce garde-fou, la fiche
+   se redessinait et détruisait le champ au moment où l'iPhone ouvrait la roue d'heure. */
+const isField = el => /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
 function fieldValue(root, sel){ const el = root.querySelector(sel); return el ? el.value : null; }
 /* choix du jour dans les fiches : aujourd'hui, hier, avant-hier (+ le jour affiché s'il est plus ancien) */
 function dayPicker(date){
@@ -1029,7 +1035,7 @@ function wizard(){
       readFields();
     });
     root.addEventListener("click", ev => {
-      const b = ev.target.closest("[data-a]"); if (!b) return;
+      const b = ev.target.closest("[data-a]"); if (!b || isField(b)) return;
       readFields();
       const a = b.dataset.a, k = b.dataset.k, v = b.dataset.v, s = root.scrollTop;
       if (a === "close") return closeSheet();
@@ -1134,7 +1140,7 @@ function mealSheet(existing){
       readFields();
     });
     root.addEventListener("click", e => {
-      const b = e.target.closest("[data-a]"); if (!b) return;
+      const b = e.target.closest("[data-a]"); if (!b || isField(b)) return;
       readFields();
       const a = b.dataset.a, s = root.scrollTop;
       if (a === "close") return closeSheet();
@@ -1183,7 +1189,7 @@ function symSheet(existing){
     };
     onField(root, readFields);
     root.addEventListener("click", e => {
-      const b = e.target.closest("[data-a]"); if (!b) return;
+      const b = e.target.closest("[data-a]"); if (!b || isField(b)) return;
       readFields();
       const a = b.dataset.a, sc = root.scrollTop;
       if (a === "close") return closeSheet();
@@ -1428,7 +1434,7 @@ function backupSheet(){
       <textarea id="bk" readonly style="min-height:26vh;font-size:.7rem">${esc(text)}</textarea>
       <div class="sheet-foot"><button class="btn ghost" data-a="copy">Copier</button><button class="btn" data-a="file">Enregistrer le fichier</button></div>`;
     root.addEventListener("click", async e => {
-      const b = e.target.closest("[data-a]"); if (!b) return;
+      const b = e.target.closest("[data-a]"); if (!b || isField(b)) return;
       if (b.dataset.a === "close") return closeSheet();
       if (b.dataset.a === "file") {
         const blob = new Blob([text], {type:"application/json"});
@@ -1469,7 +1475,7 @@ function restoreSheet(){
     });
     root.addEventListener("input", e => { if (e.target.id === "rs") val = e.target.value; });
     root.addEventListener("click", e => {
-      const b = e.target.closest("[data-a]"); if (!b) return;
+      const b = e.target.closest("[data-a]"); if (!b || isField(b)) return;
       if (b.dataset.a === "close") return closeSheet();
       if (b.dataset.a === "go") {
         let data;
@@ -1684,7 +1690,7 @@ async function exportSummary(){
         ${dl?`<button class="btn ghost" data-a="dl">Télécharger</button>`:""}
         <button class="btn" data-a="copy">Copier</button></div>`;
     root.addEventListener("click", async e => {
-      const b = e.target.closest("[data-a]"); if (!b) return;
+      const b = e.target.closest("[data-a]"); if (!b || isField(b)) return;
       if (b.dataset.a === "close") closeSheet();
       if (b.dataset.a === "copy") {
         try { await navigator.clipboard.writeText(text); toast("Copié"); }
@@ -1786,6 +1792,10 @@ document.addEventListener("click", e => {
   if (a === "exit-demo") { S.days = S.real; S.real = null; S.demo = false; S.cur = today(); S.tab = "today"; render(); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#sheet-root").innerHTML) closeSheet(); });
+/* Si quelque chose casse, on le montre au lieu d'échouer en silence :
+   une capture d'écran de ce message suffit à diagnostiquer. */
+addEventListener("error", e => toast(`Erreur : ${e.message || "inconnue"}. Vos données enregistrées ne sont pas touchées.`));
+addEventListener("unhandledrejection", e => toast(`Erreur : ${(e.reason && e.reason.message) || e.reason || "inconnue"}.`));
 /* au doigt, la bulle du graphique se ferme en touchant ailleurs */
 document.addEventListener("pointerdown", e => {
   if (e.target.closest && e.target.closest("#trend")) return;

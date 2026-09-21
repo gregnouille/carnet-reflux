@@ -1,7 +1,7 @@
 /* Carnet Reflux — fonctionnement hors ligne.
    L'app est mise en cache à l'installation ; les données de la personne
    restent dans le navigateur (localStorage) et ne passent jamais par ici. */
-const CACHE = "reflux-v5";
+const CACHE = "reflux-1.2"; // même numéro que APP_VERSION dans index.html
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png"];
 
 self.addEventListener("install", e => {
